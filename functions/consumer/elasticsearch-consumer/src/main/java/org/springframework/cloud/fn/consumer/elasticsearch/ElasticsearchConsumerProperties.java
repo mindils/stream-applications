@@ -28,6 +28,11 @@ public class ElasticsearchConsumerProperties {
 	Expression id;
 
 	/**
+	 * The key in json for id document.
+	 */
+	String idName;
+
+	/**
 	 * Name of the index.
 	 */
 	String index;
@@ -54,8 +59,16 @@ public class ElasticsearchConsumerProperties {
 		return id;
 	}
 
+	public String getIdName() {
+		return idName;
+	}
+
 	public void setId(Expression id) {
 		this.id = id;
+	}
+
+	public void setIdName(String idName) {
+		this.idName = idName;
 	}
 
 	public String getIndex() {

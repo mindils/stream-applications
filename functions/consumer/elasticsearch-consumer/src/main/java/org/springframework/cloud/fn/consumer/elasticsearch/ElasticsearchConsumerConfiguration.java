@@ -20,6 +20,9 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.elasticsearch.action.ActionListener;
@@ -54,7 +57,6 @@ public class ElasticsearchConsumerConfiguration {
 		return message -> {
 
 			IndexRequest request = new IndexRequest(consumerProperties.getIndex());
-
 			String id = "";
 			if (message.getHeaders().containsKey(INDEX_ID_HEADER)) {
 				id = (String) message.getHeaders().get(INDEX_ID_HEADER);
@@ -65,6 +67,21 @@ public class ElasticsearchConsumerConfiguration {
 			request.id(id);
 
 			if (message.getPayload() instanceof String) {
+				if (consumerProperties.getIdName() != null) {
+					ObjectMapper mapper = new ObjectMapper();
+					Map<String, Object> payloadMap = null;
+					try {
+						payloadMap = mapper.readValue((String) message.getPayload(), new TypeReference<Map<String, Object>>() {
+						});
+					}
+					catch (JsonProcessingException ignored) {
+					}
+
+					if (payloadMap != null) {
+						request.id(payloadMap.get(consumerProperties.getIdName()).toString());
+					}
+
+				}
 				request.source((String) message.getPayload(), XContentType.JSON);
 			}
 			else if (message.getPayload() instanceof Map) {

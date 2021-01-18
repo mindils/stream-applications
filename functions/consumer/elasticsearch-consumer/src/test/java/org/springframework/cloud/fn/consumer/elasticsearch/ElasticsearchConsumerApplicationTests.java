@@ -57,11 +57,12 @@ public class ElasticsearchConsumerApplicationTests {
 	public void testBasicJsonString() {
 		this.contextRunner
 				.withPropertyValues("elasticsearch.consumer.index=foo", "elasticsearch.consumer.id=1",
+						"elasticsearch.consumer.idName=age",
 						"spring.elasticsearch.rest.uris=http://" + elasticsearch.getHttpHostAddress())
 				.run(context -> {
 					Consumer<Message<?>> elasticsearchConsumer = context.getBean("elasticsearchConsumer", Consumer.class);
 
-					String jsonObject = "{\"age\":10,\"dateOfBirth\":1471466076564,"
+					String jsonObject = "{\"age\":1,\"dateOfBirth\":1471466076564,"
 							+ "\"fullName\":\"John Doe\"}";
 					final Message<String> message = MessageBuilder.withPayload(jsonObject).build();
 
